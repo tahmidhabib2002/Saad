@@ -41,7 +41,16 @@
 <label>রোগী যেসব সমস্যা নিয়ে এসেছে:</label> <select id="problem" multiple> <option>ব্যথা</option> <option>পুঁজ হয়েছে</option> <option>তাঁত শির শির করছে</option> <option>রোগী এক্সিডেন্ট করেছে</option> </select> <input type="text" placeholder="অতিরিক্ত সমস্যা (কাস্টম)" id="customProblem">
 
 <label>রোগীর যেসব চিকিৎসা করতে হবে:</label> <select id="treatment" multiple> <option>রুট ক্যানেল চিকিৎসা</option> <option>দাঁতের ফিলিং বসানো</option> <option>দাঁত তুলে ফেলা</option> <option>মাইনর সার্জারি</option> </select> <input type="text" placeholder="অতিরিক্ত চিকিৎসা (কাস্টম)" id="customTreatment">
-
+<label>রোগীর পূর্বের সমস্যা:</label>
+<select id="previousProblem" multiple>
+  <option value="ডায়াবেটিস">ডায়াবেটিস</option>
+  <option value="প্রেসার">প্রেসার</option>
+  <option value="হার্ট">হার্ট</option>
+  <option value="এজমা">এজমা</option>
+</select>
+<input type="text" id="customPreviousProblem" placeholder="অতিরিক্ত সমস্যা লিখুন">
+<label>প্রেসক্রাইবকৃত ওষুধের নাম:</label>
+<textarea id="prescribedMedicines" placeholder="যে সকল ওষুধ প্রেসক্রাইব করা হয়েছে এখানে লিখুন"></textarea>
 <label>মোট খরচ:</label> <input type="number" id="totalCost">
 
 <label>অ্যাডভান্স:</label> <input type="number" id="advance">
@@ -74,23 +83,23 @@
     <div class="divider"></div>
     <div class="tooth-row">
       R &nbsp;
-      <span class="tooth-label" data-tooth="R18">8</span>
-      <span class="tooth-label" data-tooth="R17">7</span>
-      <span class="tooth-label" data-tooth="R16">6</span>
-      <span class="tooth-label" data-tooth="R15">5</span>
-      <span class="tooth-label" data-tooth="R14">4</span>
-      <span class="tooth-label" data-tooth="R13">3</span>
-      <span class="tooth-label" data-tooth="R12">2</span>
-      <span class="tooth-label" data-tooth="R11">1</span>
+      <span class="tooth-label" data-tooth="R8">8</span>
+      <span class="tooth-label" data-tooth="R7">7</span>
+      <span class="tooth-label" data-tooth="R6">6</span>
+      <span class="tooth-label" data-tooth="R5">5</span>
+      <span class="tooth-label" data-tooth="R4">4</span>
+      <span class="tooth-label" data-tooth="R3">3</span>
+      <span class="tooth-label" data-tooth="R2">2</span>
+      <span class="tooth-label" data-tooth="R1">1</span>
       | 
-      <span class="tooth-label" data-tooth="L11">1</span>
-      <span class="tooth-label" data-tooth="L12">2</span>
-      <span class="tooth-label" data-tooth="L13">3</span>
-      <span class="tooth-label" data-tooth="L14">4</span>
-      <span class="tooth-label" data-tooth="L15">5</span>
-      <span class="tooth-label" data-tooth="L16">6</span>
-      <span class="tooth-label" data-tooth="L17">7</span>
-      <span class="tooth-label" data-tooth="L18">8</span> &nbsp; L
+      <span class="tooth-label" data-tooth="L1">1</span>
+      <span class="tooth-label" data-tooth="L2">2</span>
+      <span class="tooth-label" data-tooth="L3">3</span>
+      <span class="tooth-label" data-tooth="L4">4</span>
+      <span class="tooth-label" data-tooth="L5">5</span>
+      <span class="tooth-label" data-tooth="L6">6</span>
+      <span class="tooth-label" data-tooth="L7">7</span>
+      <span class="tooth-label" data-tooth="L8">8</span> &nbsp; L
     </div>
   </div><button onclick="addPatient()">Add Patient</button>
 
@@ -134,6 +143,10 @@
         date: document.getElementById('date').value,
         problem: [...document.getElementById('problem').selectedOptions].map(o => o.value).concat(document.getElementById('customProblem').value),
         treatment: [...document.getElementById('treatment').selectedOptions].map(o => o.value).concat(document.getElementById('customTreatment').value),
+        previousProblem: [...document.getElementById('previousProblem').selectedOptions]
+                   .map(opt => opt.value)
+                   .concat(document.getElementById('customPreviousProblem').value || ''),
+        prescribedMedicines: document.getElementById('prescribedMedicines').value,
         totalCost: document.getElementById('totalCost').value,
         advance: document.getElementById('advance').value,
         due: document.getElementById('due').value,
