@@ -30,13 +30,18 @@
   <a href="history.html" style="
   display: inline-block;
   padding: 10px 20px;
-  background-color: #007BFF;
+  background-color: #007BFF; /* নীল রঙ */
   color: white;
   text-decoration: none;
   border-radius: 5px;
   font-weight: bold;
-">পেশেন্ট হিস্ট্রি</a>
-  <label>রোগীর নাম:</label> <input type="text" id="name">
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
+">
+  সকল হিস্ট্রি
+</a>
+  
+    
+ <label>রোগীর নাম:</label> <input type="text" id="name">
 
 <label>ঠিকানা:</label> <input type="text" id="address">
 
@@ -158,8 +163,7 @@
         advance: document.getElementById('advance').value,
         due: document.getElementById('due').value,
         teeth: Array.from(selectedTeeth),
-        photo: document.getElementById('photo').files[0]?.name || ''
-      };
+         };
 
       let patients = JSON.parse(localStorage.getItem('patients') || '[]');
       patients.push(patient);
