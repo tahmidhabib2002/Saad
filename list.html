@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <title>SMS তালিকা</title>
+  <style>
+    body {
+      font-family: Arial;
+      margin: 20px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .top-bar {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 15px;
+    }
+    #copyButton {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .number-box {
+      background-color: #f1f1f1;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .delete-btn {
+      background-color: red;
+      color: white;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>SMS তালিকা</h2>
+  <div class="top-bar">
+    <button id="copyButton">নাম্বার কপি</button>
+  </div>
+
+  <div id="numberList"></div>
+
+  <script>
+    function loadNumbers() {
+      const listDiv = document.getElementById("numberList");
+      listDiv.innerHTML = "";
+
+      const patients = JSON.parse(localStorage.getItem("patients") || "[]");
+
+      patients.forEach((patient, index) => {
+        const div = document.createElement("div");
+        div.className = "number-box";
+        div.innerHTML = `
+          <div>
+            <strong>${patient.name}</strong><br>
+            ${patient.phone}
+          </div>
+          <button class="delete-btn" onclick="deleteNumber(${index})">ডিলিট</button>
+        `;
+        listDiv.appendChild(div);
+      });
+    }
+
+    function deleteNumber(index) {
+      const patients = JSON.parse(localStorage.getItem("patients") || "[]");
+      patients.splice(index, 1);
+      localStorage.setItem("patients", JSON.stringify(patients));
+      loadNumbers();
+    }
+
+    document.getElementById("copyButton").addEventListener("click", () => {
+      const patients = JSON.parse(localStorage.getItem("patients") || "[]");
+      const numbers = patients.map(p => p.phone).join("\n");
+      navigator.clipboard.writeText(numbers).then(() => {
+        alert("সব নাম্বার কপি হয়েছে");
+      });
+    });
+
+    loadNumbers();
+  </script>
+
+</body>
+</html>
