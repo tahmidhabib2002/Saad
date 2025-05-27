@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <title>রোগীর হিস্ট্রি</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f0f0f0; padding: 20px; }
+    h2 { text-align: center; }
+    .search-box, .card { background: white; padding: 15px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .card h3 { margin: 5px 0; }
+    .btn { padding: 8px 12px; margin-top: 10px; border: none; background: #28a745; color: white; border-radius: 5px; cursor: pointer; }
+    .btn-view { background: #007bff; }
+    .btn-delete { background: #dc3545; }
+    input[type="number"], input[type="date"] { width: 100%; padding: 5px; margin: 5px 0; }
+    .payment-box { margin-top: 10px; border-top: 1px solid #ccc; padding-top: 10px; }
+  </style>
+</head>
+<body>
+  <h2>রোগীর হিস্ট্রি</h2>
+  <div class="search-box">
+    <label>কোড বা ফোন নম্বর দিয়ে খুঁজুন:</label>
+    <input type="text" id="searchInput" placeholder="কোড / ফোন নম্বর">
+  </div>
+  <div id="patientList"></div>
+
+  <script>
+    let patients = JSON.parse(localStorage.getItem('patients') || '[]');
+
+    function displayPatients() {
+      const container = document.getElementById('patientList');
+      container.innerHTML = '';
+      patients.forEach(patient => {
+        const card = document.createElement('div');
+        card.className = 'card';
+
+        card.innerHTML = `
+          <h3>কোড: ${patient.id}</h3>
+          <p>নাম: ${patient.name}</p>
+          <p>ফোন: ${patient.phone}</p>
+          <p>মোট খরচ: ${patient.totalCost} টাকা</p>
+          <p>অ্যাডভান্স: ${patient.advance} টাকা</p>
+          <p>বাকি: <span id="due-${patient.id}">${patient.due}</span> টাকা</p>
+          <button class="btn btn-view" onclick="viewPatient('${patient.id}')">ভিউ</button>
+          <button class="btn btn-delete" onclick="deletePatient('${patient.id}')">ডিলিট</button>
+          
+          <div class="payment-box">
+            <label>টাকা দিন:</label>
+            <input type="number" id="payAmount-${patient.id}" placeholder="টাকার পরিমাণ">
+            <label>তারিখ:</label>
+            <input type="date" id="payDate-${patient.id}">
+            <button class="btn" onclick="addPayment('${patient.id}')">টাকা জমা দিন</button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function viewPatient(id) {
+      localStorage.setItem('viewPatientId', id);
+      window.location.href = 'view.html';
+    }
+
+    function deletePatient(id) {
+      if (confirm("আপনি কি রোগীর তথ্য ডিলিট করতে চান?")) {
+        patients = patients.filter(p => p.id !== id);
+        localStorage.setItem('patients', JSON.stringify(patients));
+        displayPatients();
+      }
+    }
+
+    function addPayment(id) {
+      const amount = parseFloat(document.getElementById(`payAmount-${id}`).value) || 0;
+      const date = document.getElementById(`payDate-${id}`).value;
+      const patient = patients.find(p => p.id === id);
+
+      if (!amount || !date) {
+        alert('টাকা ও তারিখ দিন');
+        return;
+      }
+
+      // বাকি থেকে টাকা বাদ
+      patient.advance = (parseFloat(patient.advance) || 0) + amount;
+      patient.due = (parseFloat(patient.totalCost) || 0) - patient.advance;
+
+      // পেমেন্ট হিস্টরি সংরক্ষণ
+      if (!patient.payments) patient.payments = [];
+      patient.payments.push({ amount, date });
+
+      // আপডেট
+      document.getElementById(`due-${id}`).innerText = patient.due.toFixed(2);
+      localStorage.setItem('patients', JSON.stringify(patients));
+      alert("পেমেন্ট যোগ হয়েছে");
+    }
+
+    document.getElementById('searchInput').addEventListener('input', function () {
+      const val = this.value.toLowerCase();
+      const cards = document.querySelectorAll('.card');
+      cards.forEach(card => {
+        card.style.display = card.innerText.toLowerCase().includes(val) ? '' : 'none';
+      });
+    });
+
+    displayPatients();
+  </script>
+</body>
+</html>

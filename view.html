@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <title>রোগীর বিস্তারিত</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 20px; }
+    .container { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); max-width: 800px; margin: auto; }
+    h2 { text-align: center; }
+    p { line-height: 1.6; }
+    .label { font-weight: bold; }
+    .payment-history { margin-top: 20px; padding: 10px; background: #f9f9f9; border-radius: 5px; }
+    .photo { margin-top: 15px; }
+    img { max-width: 200px; border-radius: 10px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>রোগীর বিস্তারিত তথ্য</h2>
+    <div id="details"></div>
+  </div>
+
+  <script>
+    const id = localStorage.getItem('viewPatientId');
+    const patients = JSON.parse(localStorage.getItem('patients') || '[]');
+    const patient = patients.find(p => p.id === id);
+
+    if (patient) {
+      const detailsDiv = document.getElementById('details');
+      const photo = patient.photo ? `<div class="photo"><img src="${patient.photo}" alt="রোগীর ছবি"></div>` : '';
+      const problems = Array.isArray(patient.problem) ? patient.problem.join(', ') : patient.problem;
+      const treatments = Array.isArray(patient.treatment) ? patient.treatment.join(', ') : patient.treatment;
+      const teeth = Array.isArray(patient.teeth) ? patient.teeth.join(', ') : patient.teeth;
+
+      let paymentsHTML = '';
+      if (patient.payments && patient.payments.length) {
+        paymentsHTML = `<div class="payment-history"><strong>পেমেন্ট হিস্ট্রি:</strong><ul>`;
+        patient.payments.forEach(pay => {
+          paymentsHTML += `<li>${pay.date}: ${pay.amount} টাকা</li>`;
+        });
+        paymentsHTML += `</ul></div>`;
+      }
+
+      detailsDiv.innerHTML = `
+        <p><span class="label">কোড:</span> ${patient.id}</p>
+        <p><span class="label">নাম:</span> ${patient.name}</p>
+        <p><span class="label">ঠিকানা:</span> ${patient.address}</p>
+        <p><span class="label">বয়স:</span> ${patient.age}</p>
+        <p><span class="label">ফোন:</span> ${patient.phone}</p>
+        <p><span class="label">তারিখ:</span> ${patient.date}</p>
+        <p><span class="label">সমস্যা:</span> ${problems}</p>
+        <p><span class="label">চিকিৎসা:</span> ${treatments}</p>
+        <p><span class="label">মোট খরচ:</span> ${patient.totalCost} টাকা</p>
+        <p><span class="label">অ্যাডভান্স:</span> ${patient.advance} টাকা</p>
+        <p><span class="label">বাকি:</span> ${patient.due} টাকা</p>
+        <p><span class="label">দাঁতের নাম্বার:</span> ${teeth}</p>
+        ${paymentsHTML}
+        ${photo}
+      `;
+    } else {
+      document.getElementById('details').innerHTML = '<p>রোগীর তথ্য পাওয়া যায়নি।</p>';
+    }
+  </script>
+</body>
+</html>
